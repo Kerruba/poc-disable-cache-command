@@ -45,9 +45,7 @@ jobs:
       run: |
         if [[ -n "$PR_NUMBER" ]]; then
             gh pr edit "$PR_NUMBER" --add-label "$NO_CACHE_LABEL"
-            git checkout "$BRANCH"
-            git commit --allow-empty -m "ci: REMOVEME"
-            git push
+            git commit --allow-empty -m "ci: REMOVEME" && git push
         else
           echo ":debug:Command was not executed on a PR"
         fi
@@ -63,9 +61,7 @@ jobs:
       run: |
         if [[ -n "$PR_NUMBER" ]]; then
             gh pr edit "$PR_NUMBER" --remove-label "$NO_CACHE_LABEL"
-            git checkout "$BRANCH"
-            git commit --allow-empty -m "ci: REMOVEME"
-            git push
+            git commit --allow-empty -m "ci: REMOVEME" && git push
         else
           echo ":debug:Command was not executed on a PR"
         fi
