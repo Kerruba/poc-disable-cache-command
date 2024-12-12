@@ -45,6 +45,8 @@ jobs:
       run: |
         if [[ -n "$PR_NUMBER" ]]; then
             gh pr edit "$PR_NUMBER" --add-label "$NO_CACHE_LABEL"
+            echo "Checkout branch $BRANCH and pushing empty commit"
+            git checkout "$BRANCH"
             git commit --allow-empty -m "ci: REMOVEME" && git push
         else
           echo ":debug:Command was not executed on a PR"
@@ -58,9 +60,12 @@ jobs:
         GH_REPO: ${{ github.repository }}
         GH_TOKEN: ${{ github.token }}
         PR_NUMBER: ${{ github.event.client_payload.pull_request.number }}
+        BRANCH: ${{ github.event.client_payload.pull_request.head.ref }}
       run: |
         if [[ -n "$PR_NUMBER" ]]; then
             gh pr edit "$PR_NUMBER" --remove-label "$NO_CACHE_LABEL"
+            echo "Checkout branch $BRANCH and pushing empty commit"
+            git checkout "$BRANCH"
             git commit --allow-empty -m "ci: REMOVEME" && git push
         else
           echo ":debug:Command was not executed on a PR"
