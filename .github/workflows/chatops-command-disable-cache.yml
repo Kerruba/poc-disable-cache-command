@@ -29,7 +29,7 @@ jobs:
 
     - name: Disable cache restoration
       id: disable-cache
-      if: ${{ github.event.client_payload.slash_command.command == "disable-cache" }}
+      if: ${{ github.event.client_payload.slash_command.command == 'disable-cache' }}
       shell: bash
       env:
         GH_REPO: ${{ github.repository }}
@@ -45,7 +45,7 @@ jobs:
 
     - name: Enable cache restoration
       id: enable-cache
-      if: ${{ github.event.client_payload.slash_command.command == "enable-cache" }}
+      if: ${{ github.event.client_payload.slash_command.command == 'enable-cache' }}
       shell: bash
       env:
         GH_REPO: ${{ github.repository }}
