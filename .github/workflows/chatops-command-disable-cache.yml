@@ -28,6 +28,11 @@ jobs:
 
     - uses: actions/checkout@v4
 
+    - name: Git User Setup
+      run: |
+        git config --global user.email "github-actions[release]"
+        git config --global user.name "github-actions[release]@users.noreply.github.com"
+
     - name: Disable cache restoration
       id: disable-cache
       if: ${{ github.event.client_payload.slash_command.command == 'disable-cache' }}
