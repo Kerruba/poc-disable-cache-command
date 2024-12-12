@@ -1,0 +1,30 @@
+---
+name: Caching test
+
+
+description: |
+  Composite action used to test disable-cache mechanism
+  based on chat-ops command and PR labels
+
+runs:
+  using: composite
+  steps:
+      # Check if PR contains a label to disable the cache
+    - name: Check if cache is disabled
+      if: ${{ !(startsWith(github.ref_name, 'stable/') || github.ref_name == 'main') }}
+      uses: ./.github/actions/is-cache-disabled
+      id: is-cache-disabled
+
+    - name: Cache local Maven repository
+      # Only use the full cache action if we're on main or stable/* branches
+      if: ${{ startsWith(github.ref_name, 'stable/') || github.ref_name == 'main' }}
+      shell: sh
+      run: |
+        echo "Saving cache"
+
+    - name: Restore maven cache
+      # Restore cache (but don't save it) if we're not on main or stable/* branches or cache is not disabled
+      if: ${{ !(startsWith(github.ref_name, 'stable/') || github.ref_name == 'main') && steps.is-cached-disabled.outputs.is-cache-disabled == 'false' }}
+      shell: sh
+      run: |
+        echo "Restoring cache"

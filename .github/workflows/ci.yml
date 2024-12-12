@@ -1,0 +1,13 @@
+name: CI
+
+on:
+  pull_request: {}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps: 
+      - uses: actions/checkout@v4
+      # Detect changes against the base branch
+      - name: Cache restore
+        uses: ./.github/actions/caching
