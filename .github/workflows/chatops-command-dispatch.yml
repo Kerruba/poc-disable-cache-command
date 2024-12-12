@@ -1,0 +1,32 @@
+---
+name: ChatOps Command Dispatch
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  dispatch-pr-command:
+    if: ${{ github.event.issue.pull_request }}
+    name: Dispatch PR Command
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Slash Command Dispatch
+        uses: peter-evans/slash-command-dispatch@v4
+        with:
+          token: ${{ secrets.PAT }}
+          reaction-token: ${{ secrets.PAT }}
+          issue-type: pull-request
+          commands: |
+            disable-cache
+            enable-cache
+
+      - name: Update comment in case of failure
+        if: failure()
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          comment-id: ${{ github.event.comment.id }}
+          body: |
+            > Had issues fulfilling your command, check the logs
+          reactions: confused
