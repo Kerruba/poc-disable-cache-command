@@ -1,0 +1,48 @@
+---
+name: ChatOps Command Dispatch
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  dispatch-pr-command:
+    if: ${{ github.event.issue.pull_request }}
+    name: Dispatch PR Command
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Create URL to the run output
+        id: vars
+        run: |
+          {
+            echo "run_url=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Generate a GitHub token
+        id: github-token
+        uses: camunda/infra-global-github-actions/generate-github-app-token-from-vault-secrets@main
+        with:
+          github-app-id-vault-key: GITHUB_OPTIMIZE_APP_ID
+          github-app-id-vault-path: secret/data/products/optimize/ci/camunda-optimize
+          github-app-private-key-vault-key: GITHUB_OPTIMIZE_APP_KEY
+          github-app-private-key-vault-path: secret/data/products/optimize/ci/camunda-optimize
+
+      - name: Slash Command Dispatch
+        uses: peter-evans/slash-command-dispatch@v4
+        with:
+          token: ${{ secrets.PAT }}
+          reaction-token: ${{ secrets.PAT }}
+          issue-type: pull-request
+          commands: |
+            disable-cache
+            enable-cache
+
+      - name: Update comment in case of failure
+        if: failure()
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          comment-id: ${{ github.event.comment.id }}
+          body: |
+            > Had issues fulfilling your command, check the [logs](${{ steps.vars.outputs.run_url }})
+          reactions: confused
