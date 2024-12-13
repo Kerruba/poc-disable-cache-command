@@ -18,17 +18,15 @@ runs:
   using: composite
   steps:
 
-  - name: Dump event
-    shell: bash
-    env:
-      PAYLOAD_CONTEXT: ${{ toJson(github.event) }}
-    run: echo "$PAYLOAD_CONTEXT"
-      
+  # - name: Dump event
+  #   shell: bash
+  #   env:
+  #     PAYLOAD_CONTEXT: ${{ toJson(github.event) }}
+  #   run: echo "$PAYLOAD_CONTEXT"
   - id: detect-cache-disabled
     env:
-      GH_PR_LABELS: ${{ contains(github.event.issue.labels.*.name, 'ci:no-cache') }}
+      IS_CACHE_DISABLED: ${{ contains(github.event.pull_request.labels.*.name, 'ci:no-cache') }}
     shell: bash
     run: |
-      echo "This are the labels: ${{ toJSON(github.event.issue.labels.*.name) }}"
-      echo is-cache-disabled="$GH_PR_LABELS" | tee -a $GITHUB_OUTPUT
+      echo is-cache-disabled="$IS_CACHE_DISABLED" | tee -a $GITHUB_OUTPUT
 
