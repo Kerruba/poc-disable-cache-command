@@ -26,6 +26,14 @@ jobs:
         PAYLOAD_CONTEXT: ${{ toJson(github.event.client_payload) }}
       run: echo "$PAYLOAD_CONTEXT"
 
+    - uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.PAT }}
+          #
+    - name: Git User Setup
+      run: |
+        git config --global user.email "github-actions[bot]"
+        git config --global user.name "github-actions[bot]@users.noreply.github.com"
 
     - name: Disable cache restoration
       id: disable-cache
@@ -39,21 +47,13 @@ jobs:
       run: |
         if [[ -n "$PR_NUMBER" ]]; then
             gh pr edit "$PR_NUMBER" --add-label "$NO_CACHE_LABEL"
-            # echo "Checkout branch $BRANCH and pushing empty commit"
-            # git fetch && git checkout "$BRANCH"
-            # git commit --allow-empty -m "ci: REMOVEME" && git push
+            echo "Checkout branch $BRANCH and pushing empty commit"
+            git fetch && git checkout "$BRANCH"
+            git commit --allow-empty -m "ci: REMOVEME" && git push
         else
           echo ":debug:Command was not executed on a PR"
         fi
 
-    - uses: actions/checkout@v4
-      with:
-        token: ${{ secrets.PAT }}
-          #
-    - name: Git User Setup
-      run: |
-        git config --global user.email "github-actions"
-        git config --global user.name "github-actions@users.noreply.github.com"
 
     - name: Enable cache restoration
       id: enable-cache
