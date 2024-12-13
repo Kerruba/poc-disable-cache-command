@@ -63,6 +63,7 @@ jobs:
         GH_REPO: ${{ github.repository }}
         GH_TOKEN: ${{ github.token }}
         PR_NUMBER: ${{ github.event.client_payload.pull_request.number }}
+        BRANCH: ${{ github.event.client_payload.pull_request.head.ref }}
       run: |
         if [[ -n "$PR_NUMBER" ]]; then
             gh pr edit "$PR_NUMBER" --remove-label "$NO_CACHE_LABEL"
@@ -85,7 +86,6 @@ jobs:
     # - name: Commit & Push changes
     #   uses: actions-js/push@master
     #   env: 
-    #     BRANCH: ${{ github.event.client_payload.pull_request.head.ref }}
     #   with:
     #     github_token: ${{ secrets.PAT }}
     #     message: 'ci: REMOVEME'
