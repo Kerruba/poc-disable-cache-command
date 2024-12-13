@@ -26,12 +26,6 @@ jobs:
         PAYLOAD_CONTEXT: ${{ toJson(github.event.client_payload) }}
       run: echo "$PAYLOAD_CONTEXT"
 
-    - uses: actions/checkout@v4
-
-    - name: Git User Setup
-      run: |
-        git config --global user.email "github-actions[release]"
-        git config --global user.name "github-actions[release]@users.noreply.github.com"
 
     - name: Disable cache restoration
       id: disable-cache
@@ -79,6 +73,21 @@ jobs:
         comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
         reactions: "+1"
         reactions-edit-mode: replace
+          #
+    # - name: Git User Setup
+    #   run: |
+    #     git config --global user.email "github-actions"
+    #     git config --global user.name "github-actions@users.noreply.github.com"
+
+    - uses: actions/checkout@v4
+      with:
+        persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
+        fetch-depth: 0             # otherwise, you will fail to push refs to dest repo
+
+    - name: Commit & Push changes
+      uses: actions-js/push@master
+      with:
+        github_token: ${{ secrets.PAT }}
 
     - name: Update comment in case of failure
       if: failure()
