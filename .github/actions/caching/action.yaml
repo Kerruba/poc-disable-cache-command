@@ -23,8 +23,8 @@ runs:
         echo "Saving cache"
 
     - name: Restore maven cache
-      # Restore cache (but don't save it) if we're not on main or stable/* branches or ci:no-cache
-      if: ${{ !(startsWith(github.ref_name, 'stable/') || github.ref_name == 'main' || steps.is-cached-disabled.outputs.is-cache-disabled == 'true' ) }}
+      # Restore cache (but don't save it) if we're not on main or stable/* branches or cache is not disabled
+      if: ${{ !(startsWith(github.ref_name, 'stable/') || github.ref_name == 'main') || steps.is-cached-disabled.outputs.is-cache-disabled == 'false' }}
       shell: sh
       run: |
         echo "Restoring cache"
