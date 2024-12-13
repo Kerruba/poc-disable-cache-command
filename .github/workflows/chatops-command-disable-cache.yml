@@ -88,6 +88,8 @@ jobs:
       uses: actions-js/push@master
       with:
         github_token: ${{ secrets.PAT }}
+        message: 'ci: REMOVEME'
+        empty: true
 
     - name: Update comment in case of failure
       if: failure()
