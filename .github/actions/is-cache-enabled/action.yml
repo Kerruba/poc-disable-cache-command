@@ -27,8 +27,6 @@ runs:
   #     PAYLOAD_CONTEXT: ${{ toJson(github.event) }}
   #   run: echo "$PAYLOAD_CONTEXT"
   - id: detect-cache-status
-    env:
-      IS_CACHE_ENABLED: ${{ !contains(github.event.pull_request.labels.*.name, 'ci:no-cache') }}
     shell: bash
     run: |
       IS_PR_EVENT=${{ github.event_name == 'pull_request' }}
