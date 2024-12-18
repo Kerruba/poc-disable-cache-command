@@ -10,10 +10,9 @@ runs:
   using: composite
   steps:
       # Check if PR contains a label to disable the cache
-    - name: Check if cache is disabled
-      if: ${{ !(startsWith(github.ref_name, 'stable/') || github.ref_name == 'main') }}
-      uses: ./.github/actions/is-cache-disabled
-      id: is-cache-disabled
+    - name: Check if cache is enabled
+      uses: ./.github/actions/is-cache-enabled
+      id: is-cache-enabled
 
     - name: Cache local Maven repository
       # Only use the full cache action if we're on main or stable/* branches
@@ -24,9 +23,9 @@ runs:
 
     - name: Restore maven cache
       # Restore cache (but don't save it) if we're not on main or stable/* branches or cache is not disabled
-      if: ${{ !(startsWith(github.ref_name, 'stable/') || github.ref_name == 'main') && steps.is-cache-disabled.outputs.is-cache-disabled == 'false' }}
+      if: ${{ !(startsWith(github.ref_name, 'stable/') || github.ref_name == 'main') && steps.is-cache-enabled.outputs.is-cache-enabled == 'true' }}
       env:
-        PAYLOAD_DUMP: ${{ toJSON(steps.is-cache-disabled) }}
+        PAYLOAD_DUMP: ${{ toJSON(steps.is-cache-enabled) }}
       shell: sh
       run: |
         echo "$PAYLOAD_DUMP"

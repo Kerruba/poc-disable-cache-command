@@ -3,7 +3,7 @@ name: chatops-command-disable-cache
 
 on:
   repository_dispatch:
-    types: [disable-cache-command, enable-cache-command]
+    types: [ci-disable-cache-command, ci-enable-cache-command]
 
 env:
   NO_CACHE_LABEL: "ci:no-cache"
@@ -36,8 +36,8 @@ jobs:
         git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
     - name: Disable cache restoration
-      id: disable-cache
-      if: ${{ github.event.client_payload.slash_command.command == 'disable-cache' }}
+      id: ci-disable-cache
+      if: ${{ github.event.client_payload.slash_command.command == 'ci-disable-cache' }}
       shell: bash
       env:
         GH_REPO: ${{ github.repository }}
@@ -54,10 +54,9 @@ jobs:
           echo ":debug:Command was not executed on a PR"
         fi
 
-
     - name: Enable cache restoration
-      id: enable-cache
-      if: ${{ github.event.client_payload.slash_command.command == 'enable-cache' }}
+      id: ci-enable-cache
+      if: ${{ github.event.client_payload.slash_command.command == 'ci-enable-cache' }}
       shell: bash
       env:
         GH_REPO: ${{ github.repository }}
@@ -82,15 +81,6 @@ jobs:
         comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
         reactions: "+1"
         reactions-edit-mode: replace
-
-    # - name: Commit & Push changes
-    #   uses: actions-js/push@master
-    #   env: 
-    #   with:
-    #     github_token: ${{ secrets.PAT }}
-    #     message: 'ci: REMOVEME'
-    #     empty: true
-    #     branch: ${{ env.BRANCH }}
 
     - name: Update comment in case of failure
       if: failure()

@@ -19,8 +19,8 @@ jobs:
           reaction-token: ${{ secrets.PAT }}
           issue-type: pull-request
           commands: |
-            disable-cache
-            enable-cache
+            ci-disable-cache
+            ci-enable-cache
 
       - name: Update comment in case of failure
         if: failure()
